@@ -1,83 +1,111 @@
 package utils.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import endPoint.Point;
 import lombok.SneakyThrows;
-import org.apache.hc.client5.http.auth.AuthScope;
-import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
-import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.HttpHost;
-import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import user.User;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 public class ApiUtils {
-
-    private static BasicCredentialsProvider authorizationUser(String userName, String passwordUser){
-        HttpHost targetHost = new HttpHost("http", "localhost", 9090);
-        BasicCredentialsProvider provider = new BasicCredentialsProvider();
-        AuthScope authScope = new AuthScope(targetHost);
-        provider.setCredentials(authScope, new UsernamePasswordCredentials
-                (userName, passwordUser.toCharArray()));
-        return provider;
-    }
-
-    private static List<NameValuePair> putParametersPost(String grantTypeName,String scopeName){
-        List<NameValuePair> nvp = new ArrayList<>();
-        nvp.add(new BasicNameValuePair("grant_type", grantTypeName));
-        nvp.add(new BasicNameValuePair("scope", scopeName));
-        return nvp;
-    }
-
-    /*private static CloseableHttpClient getHttpClient(){
-
-    }*/
     @SneakyThrows
-public static CloseableHttpResponse sendGet(User user, String a, String endPoint){
-
-        HttpPost httpPost = new HttpPost(Point.BASE_URL.getApiMethod()+a);
-        httpPost.setEntity(new UrlEncodedFormEntity(putParametersPost(user.getGrantType(), user.getUserScope())));
-        CloseableHttpClient client = HttpClientBuilder.create()
-                .setDefaultCredentialsProvider(authorizationUser(user.getUserName(), user.getUserPassword()))
-                .build();
-        client.execute(httpPost);
-
-
-        HttpGet httpGet = new HttpGet(Point.BASE_URL.getApiMethod()+endPoint);
-        client = HttpClients.createDefault();
-        CloseableHttpResponse response = client.execute(httpGet);
-        return response;
-    }
-    @SneakyThrows
-    public static CloseableHttpResponse sendPost(User user, String endPoint){
-        HttpPost httpPost = new HttpPost(Point.BASE_URL.getApiMethod()+endPoint);
-        httpPost.setEntity(new UrlEncodedFormEntity(putParametersPost(user.getGrantType(), user.getUserScope())));
-        CloseableHttpClient client = HttpClientBuilder.create()
-                .setDefaultCredentialsProvider(authorizationUser(user.getUserName(), user.getUserPassword()))
-                .build();
-        return client.execute(httpPost);
-        /*String result;
-
-        try (CloseableHttpResponse response = client.execute(httpPost)) {
-            System.out.println(response.getVersion()); // HTTP/1.1
-            System.out.println(response.getCode()); // 200
-            System.out.println(response.getReasonPhrase()); // OK
-
-            HttpEntity entity = response.getEntity();
-            result = EntityUtils.toString(entity);
-            System.out.println(result);
-            // Ensure that the stream is fully consumed
-            EntityUtils.consume(entity);
+    public static String sendGet(String token, String methodPoint, int statusCod) {
+        HttpGet httpget = new HttpGet(createApiMethodUri(token, methodPoint));
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpResponse response = httpclient.execute(httpget);
+        int statusCode = response.getStatusLine().getStatusCode();
+        assertThat(statusCode, equalTo(statusCod));
+        String jsonString;
+        try {
+            jsonString = EntityUtils.toString(response.getEntity());
+        } finally {
+            response.close();
         }
-        return result;*/
+        return jsonString;
+    }
+
+    @SneakyThrows
+    public static String sendGet(String token, String methodPoint, int statusCod, User user) {
+        HttpGet httpget = new HttpGet(createApiMethodUri(token, methodPoint, user));
+        httpget.setHeader("Content-type", "application/json");
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpResponse response = httpclient.execute(httpget);
+        int statusCode = response.getStatusLine().getStatusCode();
+        assertThat(statusCode, equalTo(statusCod));
+        String jsonString;
+        try {
+            jsonString = EntityUtils.toString(response.getEntity());
+        } finally {
+            response.close();
+        }
+        return jsonString;
+    }
+
+    @SneakyThrows
+    public static String sendPost(String token, String methodPoint, String json, int statusCod) {
+        HttpPost httpPost = new HttpPost(createApiMethodUri(token, methodPoint));
+        StringEntity entity = new StringEntity(json);
+        httpPost.setEntity(entity);
+        httpPost.setHeader("Content-type", "application/json");
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpResponse response = httpclient.execute(httpPost);
+        int statusCode = response.getStatusLine().getStatusCode();
+        assertThat(statusCode, equalTo(statusCod));
+        String jsonString;
+        try {
+            jsonString = EntityUtils.toString(response.getEntity());
+        } finally {
+            response.close();
+        }
+        return jsonString;
+    }
+
+    @SneakyThrows
+    public static List<String> getListFromJson(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, List.class);
+    }
+
+    @SneakyThrows
+    public static List<User> getUserFromJsonString(String json) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue("[" + json + "]", new TypeReference<List<User>>() {
+        });
+    }
+
+    @SneakyThrows
+    public static String getJsonStringFromObject(Object object) {
+        ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        return objectWriter.writeValueAsString(object);
+    }
+
+    @SneakyThrows
+    private static URI createApiMethodUri(String token, String methodPoint) {
+        return new URIBuilder(new URI(Point.BASE_URL.getApiPoint() + methodPoint))
+                .setParameter("access_token", token)
+                .build();
+    }
+
+    @SneakyThrows
+    private static URI createApiMethodUri(String token, String methodPoint, User user) {
+        return new URIBuilder(new URI(Point.BASE_URL.getApiPoint() + methodPoint))
+                .setParameter("access_token", token)
+                .setParameter("olderThan", String.valueOf(user.getAge() - 1))
+                .setParameter("sex", user.getSex())
+                .build();
     }
 }

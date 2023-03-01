@@ -1,43 +1,67 @@
 package user;
 
-public class User {
-    String userName;
-    String userPassword;
-    String grantType;
-    String userScope;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Objects;
+@JsonIgnoreProperties(ignoreUnknown = true)
+
+public class User {
+    private String name;
+    private int age;
+    private String sex;
+    private String zipCode;
     public User() {
     }
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getUserPassword() {
-        return userPassword;
+    public int getAge() {
+        return age;
     }
 
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
+    public void setAge(int age) {
+        this.age = age;
     }
 
-    public String getGrantType() {
-        return grantType;
+    public String getSex() {
+        return sex;
     }
 
-    public void setGrantType(String grantType) {
-        this.grantType = grantType;
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
-    public String getUserScope() {
-        return userScope;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setUserScope(String userScope) {
-        this.userScope = userScope;
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (age != user.age) return false;
+        if (!Objects.equals(name, user.name)) return false;
+        return Objects.equals(sex, user.sex);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + age;
+        result = 31 * result + (sex != null ? sex.hashCode() : 0);
+        return result;
     }
 }

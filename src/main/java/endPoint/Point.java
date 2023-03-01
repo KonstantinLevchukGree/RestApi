@@ -2,16 +2,17 @@ package endPoint;
 
 public enum Point {
     BASE_URL("http://localhost:9090"),
-    GET_USER_TOKEN("/oauth/token"),
+    USER_TOKEN("/oauth/token"),
+    ZIP_CODES("/zip-codes"),
+    EXPAND_ZIP_CODES("/expand"),
+    USERS("/users");
+    private String apiPont;
 
-    GET_ZIP_CODES("/zip-codes");
-    private String apiMethod;
-
-    public String getApiMethod() {
-        return apiMethod;
+    public String getApiPoint() {
+        return apiPont;
     }
 
     Point(String endPoint) {
-        this.apiMethod = endPoint;
+        this.apiPont = endPoint;
     }
 }
