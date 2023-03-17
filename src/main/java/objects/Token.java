@@ -1,12 +1,10 @@
-package token;
+package objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Token {
+    @Getter
     public String access_token;
-
-    public String getAccess_token() {
-        return access_token;
-    }
 }
