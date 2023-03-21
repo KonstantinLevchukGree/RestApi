@@ -1,4 +1,4 @@
-package objects;
+package rest.request;
 
 import lombok.Builder;
 import lombok.Getter;

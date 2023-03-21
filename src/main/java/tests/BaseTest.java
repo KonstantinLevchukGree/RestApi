@@ -1,10 +1,10 @@
 package tests;
 
-import objects.Client;
+import rest.request.Client;
 import org.junit.jupiter.api.BeforeEach;
-import objects.User;
-import configurate.AuthenticationClient;
-import utils.property.PropertyUtil;
+import rest.User;
+import rest.AuthenticationClient;
+import utils.PropertyUtil;
 
 import java.util.Properties;
 
@@ -13,7 +13,7 @@ public class BaseTest {
     public static String writerToken;
     public static User user;
     public static String incorrectZipCode;
-    public static Properties applicationData = PropertyUtil.getProperties("applicationData.properties");
+    public static Properties applicationData = PropertyUtil.getProperties("app.properties");
 
     @BeforeEach
     public void init() {

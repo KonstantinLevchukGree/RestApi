@@ -1,4 +1,4 @@
-package utils.property;
+package utils;
 
 import lombok.SneakyThrows;
 

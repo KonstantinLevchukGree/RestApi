@@ -1,6 +1,6 @@
-package configurate;
+package rest;
 
-import objects.Client;
+import rest.request.Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.http.HttpEntity;
@@ -16,7 +16,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import objects.Token;
+import rest.response.Token;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package objects;
+package rest.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
