@@ -33,7 +33,7 @@ public class UserTest extends BaseTest {
     @Test
     public void checkAddUserWithIncorrectZipCode() {
         user.setZipCode(incorrectZipCode);
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user),HttpStatus.SC_CREATED);
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user),HttpStatus.SC_FAILED_DEPENDENCY);
         List<User> users = ApplicationClient.getUsers(user,HttpStatus.SC_OK);
         assertTrue(users.contains(users), "User added");
     }
@@ -44,7 +44,7 @@ public class UserTest extends BaseTest {
         user.setZipCode(availableZipCodes.get(0));
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(user),HttpStatus.SC_CREATED);
         user.setZipCode(availableZipCodes.get(1));
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user),HttpStatus.SC_CREATED);
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user),HttpStatus.SC_BAD_REQUEST);
 
         List<User> users = ApplicationClient.getUsers(user,HttpStatus.SC_OK);
         //Same users added to application. Bug
