@@ -8,6 +8,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import rest.User;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -32,12 +34,29 @@ public class ApiUtils {
         ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
         return objectWriter.writeValueAsString(object);
     }
+
+    @SneakyThrows
+    public static void usersToFile(String users) {
+        FileWriter file = new FileWriter("src/main/resources/users.json");
+        file.write(users);
+        file.close();
+    }
+
+    @SneakyThrows
+    public static File usersFromFile() {
+        return new File("src/main/resources/users.json");
+    }
+
     @SneakyThrows
     public static String fromResponseToString(CloseableHttpResponse response, int httpStatus) {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(httpStatus));
         String jsonString;
         try {
-            jsonString = EntityUtils.toString(response.getEntity());
+            if (response.getEntity() == null) {
+                jsonString = "";
+            } else {
+                jsonString = EntityUtils.toString(response.getEntity());
+            }
         } finally {
             response.close();
         }
