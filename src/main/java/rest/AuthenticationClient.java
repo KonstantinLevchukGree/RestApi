@@ -1,6 +1,5 @@
 package rest;
 
-import rest.request.Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.http.HttpEntity;
@@ -16,6 +15,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import rest.factory.client.Client;
 import rest.response.Token;
 
 import java.util.ArrayList;
@@ -24,8 +24,10 @@ import java.util.List;
 import static tests.BaseTest.applicationData;
 
 public class AuthenticationClient {
-    private static BasicCredentialsProvider getProvider(String userName, String passwordUser, String port, String hostName, String scheme) {
-        HttpHost targetHost = new HttpHost(hostName, Integer.parseInt(port), scheme);
+    private static BasicCredentialsProvider getProvider(String userName, String passwordUser) {
+        HttpHost targetHost = new HttpHost(applicationData.getProperty("token.host.name")
+                , Integer.parseInt(applicationData.getProperty("token.port.name"))
+                , applicationData.getProperty("token.scheme"));
         BasicCredentialsProvider provider = new BasicCredentialsProvider();
         AuthScope authScope = new AuthScope(targetHost);
         provider.setCredentials(authScope, new UsernamePasswordCredentials
@@ -34,26 +36,26 @@ public class AuthenticationClient {
     }
 
     @SneakyThrows
-    private static CloseableHttpClient getClient(HttpPost httpPost, Client user, String port, String hostName, String scheme) {
+    private static CloseableHttpClient getClient(HttpPost httpPost, Client user) {
         List<NameValuePair> nvp = new ArrayList<>();
         nvp.add(new BasicNameValuePair("grant_type", user.getGrantType()));
         nvp.add(new BasicNameValuePair("scope", user.getUserScope()));
         httpPost.setEntity(new UrlEncodedFormEntity(nvp));
         return HttpClientBuilder.create()
-                .setDefaultCredentialsProvider(getProvider(user.getUserName(), user.getUserPassword(), port, hostName, scheme))
+                .setDefaultCredentialsProvider(getProvider(user.getUserName(), user.getUserPassword()))
                 .build();
     }
 
     @SneakyThrows
-    private static CloseableHttpResponse getUser(Client user, String port, String hostName, String scheme) {
+    private static CloseableHttpResponse getUser(Client user) {
         HttpPost httpPost = new HttpPost(applicationData.getProperty("api.user.token"));
-        CloseableHttpClient client = getClient(httpPost, user, port, hostName, scheme);
+        CloseableHttpClient client = getClient(httpPost, user);
         return client.execute(httpPost);
     }
 
     @SneakyThrows
-    public static String getToken(Client user, String port, String hostName, String scheme) {
-        CloseableHttpResponse response = getUser(user, port, hostName, scheme);
+    public static String getToken(Client user) {
+        CloseableHttpResponse response = getUser(user);
         String jsonString;
         try {
             HttpEntity entity = response.getEntity();

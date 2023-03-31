@@ -14,10 +14,10 @@ public class CreateUserTest extends BaseTest {
     @Test
     public void checkAddUserWithAllFields() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        user.setZipCode(availableZipCodes.get(0));
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user));
+        femaleUser.setZipCode(availableZipCodes.get(0));
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         List<User> users = ApplicationClient.getUsers();
-        assertEquals(user, users.get(0), "User not added");
+        assertEquals(femaleUser, users.get(0), "User not added");
         List<String> availableZipCodesAfterAddUser = ApplicationClient.getZipCodes();
         assertEquals(availableZipCodes.size()-1,availableZipCodesAfterAddUser.size(), "Zip code not removed");
     }
@@ -26,8 +26,8 @@ public class CreateUserTest extends BaseTest {
     public void checkAddUserWithRequiredFields() {
         List<User> users = ApplicationClient.getUsers();
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        user.setZipCode(availableZipCodes.get(0));
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user));
+        femaleUser.setZipCode(availableZipCodes.get(0));
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         List<User> afterAddUser = ApplicationClient.getUsers();
         assertEquals(users.size()+1, afterAddUser.size(), "User not added");
     }
@@ -35,8 +35,8 @@ public class CreateUserTest extends BaseTest {
     @Test
     public void checkAddUserWithIncorrectZipCode() {
         List<User> users = ApplicationClient.getUsers();
-        user.setZipCode(incorrectZipCode);
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user), HttpStatus.SC_FAILED_DEPENDENCY);
+        femaleUser.setZipCode(incorrectZipCode);
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser), HttpStatus.SC_FAILED_DEPENDENCY);
         List<User> afterAddUser = ApplicationClient.getUsers();
         assertEquals(users.size(), afterAddUser.size(), "User added");
     }
@@ -45,10 +45,10 @@ public class CreateUserTest extends BaseTest {
     public void checkAddNotUniqueUser() {
         List<User> users = ApplicationClient.getUsers();
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        user.setZipCode(availableZipCodes.get(0));
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user));
+        femaleUser.setZipCode(availableZipCodes.get(0));
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         //should be 400 and added not unique user
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user), HttpStatus.SC_BAD_REQUEST);
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser), HttpStatus.SC_BAD_REQUEST);
         List<User> afterAddUser = ApplicationClient.getUsers();
         assertEquals(users.size()+1, afterAddUser.size(), "Not unique added to application");
     }

@@ -14,26 +14,26 @@ public class UpdateUserTest extends BaseTest {
     @Test
     public void checkUpdateUser() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        user.setZipCode(availableZipCodes.get(0));
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user));
-        newUser.setZipCode(availableZipCodes.get(1));
-        ApplicationClient.updateUser(user, newUser);
+        femaleUser.setZipCode(availableZipCodes.get(0));
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
+        maleUser.setZipCode(availableZipCodes.get(1));
+        ApplicationClient.updateUser(femaleUser, maleUser);
         List<User> users = ApplicationClient.getUsers();
-        assertTrue(users.contains(newUser), "User not updated");
+        assertTrue(users.contains(maleUser), "User not updated");
     }
 
     @Test
     public void checkUpdateUserWithIncorrectZipCode() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        user.setZipCode(availableZipCodes.get(0));
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user));
+        femaleUser.setZipCode(availableZipCodes.get(0));
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         List<User> users = ApplicationClient.getUsers();
-        newUser.setZipCode(incorrectZipCode);
-        newUser.setName("Unique");
+        maleUser.setZipCode(incorrectZipCode);
+        maleUser.setName("Unique");
 
-        ApplicationClient.updateUser(user, newUser, HttpStatus.SC_FAILED_DEPENDENCY);
+        ApplicationClient.updateUser(femaleUser, maleUser, HttpStatus.SC_FAILED_DEPENDENCY);
         List<User> afterUpdateUser = ApplicationClient.getUsers();
-        assertFalse(afterUpdateUser.contains(newUser), "User updated");
+        assertFalse(afterUpdateUser.contains(maleUser), "User updated");
         //Deletes the users Bug
         assertEquals(users.size(), afterUpdateUser.size(), "User deleted");
     }
@@ -41,14 +41,14 @@ public class UpdateUserTest extends BaseTest {
     @Test
     public void checkUpdateUserWithoutFields() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        user.setZipCode(availableZipCodes.get(0));
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(user));
+        femaleUser.setZipCode(availableZipCodes.get(0));
+        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         List<User> users = ApplicationClient.getUsers();
-        newUser.setName(null);
-        ApplicationClient.updateUser(user, newUser, HttpStatus.SC_CONFLICT);
+        maleUser.setName(null);
+        ApplicationClient.updateUser(femaleUser, maleUser, HttpStatus.SC_CONFLICT);
 
         List<User> afterUpdateUser = ApplicationClient.getUsers();
-        assertFalse(afterUpdateUser.contains(newUser), "User updated");
+        assertFalse(afterUpdateUser.contains(maleUser), "User updated");
         //Deleted the users Bug
         assertEquals(users.size(), afterUpdateUser.size(), "User deleted");
     }
