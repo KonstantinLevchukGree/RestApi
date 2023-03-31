@@ -28,7 +28,6 @@ public class DeleteUserTest extends BaseTest {
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         femaleUser.setAge(0);
 
-
         ApplicationClient.deleteUser(ApiUtils.fromObjectToJson(femaleUser));
         List<User> users = ApplicationClient.getUsers();
         assertFalse(users.contains(users), "User not deleted");

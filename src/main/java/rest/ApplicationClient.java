@@ -59,23 +59,18 @@ public class ApplicationClient {
     }
 
     public static void updateUser(User oldUser, User newUser) {
-        String json = "{" + "\"userNewValues\"" + ":" + ApiUtils.fromObjectToJson(newUser)
-                + "," + "\"userToChange\"" + ":" + ApiUtils.fromObjectToJson(oldUser) + "}";
-        CloseableHttpResponse response = CloseableHttpClient.sendPut(applicationData.getProperty("api.users"), json);
-        ApiUtils.fromResponseToString(response, HttpStatus.SC_OK);
+        updateUser(oldUser, newUser, HttpStatus.SC_OK);
     }
 
     public static void updateUser(User oldUser, User newUser, int httpStatus) {
-        String json = "{" + "\"userNewValues\"" + ":" + ApiUtils.fromObjectToJson(newUser)
-                + "," + "\"userToChange\"" + ":" + ApiUtils.fromObjectToJson(oldUser) + "}";
+        UpdateUser users = new UpdateUser(newUser, oldUser);
+        String json = ApiUtils.fromObjectToJson(users);
         CloseableHttpResponse response = CloseableHttpClient.sendPut(applicationData.getProperty("api.users"), json);
         ApiUtils.fromResponseToString(response, httpStatus);
     }
 
     public static void deleteUser(String json) {
-        CloseableHttpResponse response = CloseableHttpClient.sendDelete(applicationData.getProperty("api.users"), json);
-        String responseBody = ApiUtils.fromResponseToString(response, HttpStatus.SC_NO_CONTENT);
-        ApiUtils.getUserFromJson(responseBody);
+        deleteUser(json, HttpStatus.SC_NO_CONTENT);
     }
 
     public static void deleteUser(String json, int httpStatus) {
@@ -85,8 +80,7 @@ public class ApplicationClient {
     }
 
     public static String uploadUser(File file) {
-        CloseableHttpResponse response = CloseableHttpClient.sendPost(applicationData.getProperty("api.users.upload"), file);
-        return ApiUtils.fromResponseToString(response, HttpStatus.SC_CREATED).replace("Number of users = ", "").trim();
+        return uploadUser(file, HttpStatus.SC_CREATED);
     }
 
     public static String uploadUser(File file, int httpStatus) {
