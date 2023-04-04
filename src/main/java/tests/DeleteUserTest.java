@@ -1,5 +1,9 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import rest.ApplicationClient;
@@ -11,6 +15,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DeleteUserTest extends BaseTest {
+    @Epic(value = "User")
+    @Feature(value = "Delete")
+    @Story(value = "Delete one User")
+    @Description(value = "Test checks Delete one User")
     @Test
     public void checkDeleteUser() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
@@ -21,6 +29,10 @@ public class DeleteUserTest extends BaseTest {
         assertFalse(users.contains(users), "User not deleted");
     }
 
+    @Epic(value = "User")
+    @Feature(value = "Delete")
+    @Story(value = "Delete User With Required Fields")
+    @Description(value = "Test checks Delete User With Required Fields")
     @Test
     public void checkDeleteUserWithRequiredFields() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
@@ -35,6 +47,10 @@ public class DeleteUserTest extends BaseTest {
         assertTrue(availableZipCodes.containsAll(zipCodesAfterDeleteUser), "Zip code not returned");
     }
 
+    @Epic(value = "User")
+    @Feature(value = "Delete")
+    @Story(value = "Delete User Without Required Fields")
+    @Description(value = "Test checks Delete User Without Required Fields")
     @Test
     public void checkDeleteUserWithoutRequiredFields() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
