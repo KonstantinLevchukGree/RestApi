@@ -1,6 +1,11 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import rest.ApplicationClient;
 import rest.User;
@@ -11,6 +16,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UpdateUserTest extends BaseTest {
+    @Epic(value = "User")
+    @Feature(value = "Update")
+    @Story(value = "One Users")
+    @Description(value = "Test checks update Users")
     @Test
     public void checkUpdateUser() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
@@ -22,6 +31,11 @@ public class UpdateUserTest extends BaseTest {
         assertTrue(users.contains(maleUser), "User not updated");
     }
 
+    @DisplayName("Test failed, should be 424 and not update user with incorrect ZipCode")
+    @Epic(value = "User")
+    @Feature(value = "Update")
+    @Story(value = "Incorrect ZipCode")
+    @Description(value = "Test checks update Users With Incorrect ZipCode")
     @Test
     public void checkUpdateUserWithIncorrectZipCode() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
@@ -34,10 +48,14 @@ public class UpdateUserTest extends BaseTest {
         ApplicationClient.updateUser(femaleUser, maleUser, HttpStatus.SC_FAILED_DEPENDENCY);
         List<User> afterUpdateUser = ApplicationClient.getUsers();
         assertFalse(afterUpdateUser.contains(maleUser), "User updated");
-        //Deletes the users Bug
         assertEquals(users.size(), afterUpdateUser.size(), "User deleted");
     }
 
+    @DisplayName("Test failed, One user deleted from users")
+    @Epic(value = "User")
+    @Feature(value = "Update")
+    @Story(value = "Without Fields")
+    @Description(value = "Test checks update Users With Fields")
     @Test
     public void checkUpdateUserWithoutFields() {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
@@ -49,7 +67,6 @@ public class UpdateUserTest extends BaseTest {
 
         List<User> afterUpdateUser = ApplicationClient.getUsers();
         assertFalse(afterUpdateUser.contains(maleUser), "User updated");
-        //Deleted the users Bug
         assertEquals(users.size(), afterUpdateUser.size(), "User deleted");
     }
 }
