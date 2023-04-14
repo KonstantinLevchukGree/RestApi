@@ -1,4 +1,4 @@
-package tests;
+package tests.httpClient;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class UploadUsersTest extends BaseTest {
     @Epic(value = "User")
@@ -24,20 +25,16 @@ public class UploadUsersTest extends BaseTest {
     @Test
     public void checkUploadUsers() {
         List<User> usersFromUpload = new ArrayList<>();
-        List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        femaleUser.setZipCode(availableZipCodes.get(0));
         usersFromUpload.add(femaleUser);
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
-        maleUser.setZipCode(availableZipCodes.get(1));
         usersFromUpload.add(maleUser);
-        ApiUtils.usersToFile(ApiUtils.fromObjectToJson(usersFromUpload));
 
+        ApiUtils.usersToFile(ApiUtils.fromObjectToJson(usersFromUpload));
         String updatedUsers = ApplicationClient.uploadUser(ApiUtils.usersFromFile());
         assertEquals(usersFromUpload, ApplicationClient.getUsers(), "Users not updated");
         assertEquals(Integer.parseInt(updatedUsers), usersFromUpload.size(), "Number of updated users does not match");
     }
 
-    @DisplayName("Test failed, User uploaded with incorrect ZipCode")
     @Epic(value = "User")
     @Feature(value = "Upload Users from File")
     @Story(value = "Incorrect ZipCode")
@@ -49,11 +46,12 @@ public class UploadUsersTest extends BaseTest {
         femaleUser.setZipCode(availableZipCodes.get(0));
         usersFromUpload.add(femaleUser);
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
-        maleUser.setZipCode(incorrectZipCode);
+        maleUser.setZipCode(femaleUser.getZipCode() + femaleUser.getZipCode());
         usersFromUpload.add(maleUser);
+
         ApiUtils.usersToFile(ApiUtils.fromObjectToJson(usersFromUpload));
         ApplicationClient.uploadUser(ApiUtils.usersFromFile(), HttpStatus.SC_FAILED_DEPENDENCY);
-        assertEquals(usersFromUpload, ApplicationClient.getUsers(), "Users updated");
+        assertNotEquals(usersFromUpload, ApplicationClient.getUsers(), "Users updated");
     }
 
     @DisplayName("Test failed, Server cannot process the request")
@@ -64,15 +62,14 @@ public class UploadUsersTest extends BaseTest {
     @Test
     public void checkUploadUsersNoRequiredField() {
         List<User> usersFromUpload = new ArrayList<>();
-        List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        femaleUser.setZipCode(availableZipCodes.get(0));
         usersFromUpload.add(femaleUser);
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
-        maleUser.setZipCode(availableZipCodes.get(1));
+        maleUser.setName(null);
         maleUser.setSex(null);
         usersFromUpload.add(maleUser);
+
         ApiUtils.usersToFile(ApiUtils.fromObjectToJson(usersFromUpload));
         ApplicationClient.uploadUser(ApiUtils.usersFromFile(), HttpStatus.SC_CONFLICT);
-        assertEquals(usersFromUpload, ApplicationClient.getUsers(), "Users not updated");
+        assertNotEquals(usersFromUpload, ApplicationClient.getUsers(), "Users not updated");
     }
 }

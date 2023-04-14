@@ -1,14 +1,14 @@
-package tests;
+package tests.httpClient;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import rest.ApplicationClient;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +36,6 @@ public class ZipCodesTest extends BaseTest {
         Assertions.assertTrue(afterExpandZipCodes.containsAll(expandZipCodes), "Zip codes not added");
     }
 
-    @DisplayName("Test failed, Zip codes are duplicated")
     @Epic(value = "User")
     @Feature(value = "ZipCodes")
     @Story(value = "Duplicate")
@@ -50,7 +49,6 @@ public class ZipCodesTest extends BaseTest {
         Assertions.assertEquals(set.size(), expandZipCodes.size(), "Zip codes are duplicated");
     }
 
-    @DisplayName("Test failed, Zip codes are duplicated")
     @Epic(value = "User")
     @Feature(value = "ZipCodes")
     @Story(value = "Duplicate")
@@ -59,7 +57,9 @@ public class ZipCodesTest extends BaseTest {
     public void checkDuplicateAvailableAndUsedZipCodes() {
         String allZipCodes = ApplicationClient.getBodyZipCodes();
         List<String> expandZipCodes = ApplicationClient.expandZipCodes(allZipCodes);
+        Set<String> uniqueCodes = new HashSet<>(expandZipCodes);
         List<String> afterExpandZipCodes = ApplicationClient.getZipCodes();
-        Assertions.assertFalse(expandZipCodes.containsAll(afterExpandZipCodes), "Zip codes are duplicated");
+        Set<String> uniqueCodesAfterExpand = new HashSet<>(afterExpandZipCodes);
+        Assertions.assertEquals(uniqueCodes, uniqueCodesAfterExpand, "Zip codes are duplicated");
     }
 }

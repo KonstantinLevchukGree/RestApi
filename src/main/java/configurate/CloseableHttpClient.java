@@ -18,8 +18,8 @@ import rest.HttpDeleteWithBody;
 import java.io.File;
 import java.net.URI;
 
-import static tests.BaseTest.readerToken;
-import static tests.BaseTest.writerToken;
+import static tests.httpClient.BaseTest.readerToken;
+import static tests.httpClient.BaseTest.writerToken;
 
 public class CloseableHttpClient {
     @SneakyThrows

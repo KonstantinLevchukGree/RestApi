@@ -9,5 +9,4 @@ public class ReaderClient extends Client {
     public ReaderClient(String userScope) {
         this.userScope = userScope;
     }
-
 }

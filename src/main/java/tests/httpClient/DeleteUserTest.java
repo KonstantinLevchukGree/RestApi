@@ -1,4 +1,4 @@
-package tests;
+package tests.httpClient;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -21,8 +21,6 @@ public class DeleteUserTest extends BaseTest {
     @Description(value = "Test checks Delete one User")
     @Test
     public void checkDeleteUser() {
-        List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        femaleUser.setZipCode(availableZipCodes.get(0));
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         ApplicationClient.deleteUser(ApiUtils.fromObjectToJson(femaleUser));
         List<User> users = ApplicationClient.getUsers();
@@ -38,10 +36,9 @@ public class DeleteUserTest extends BaseTest {
         List<String> availableZipCodes = ApplicationClient.getZipCodes();
         femaleUser.setZipCode(availableZipCodes.get(0));
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
-        femaleUser.setAge(0);
-
         ApplicationClient.deleteUser(ApiUtils.fromObjectToJson(femaleUser));
         List<User> users = ApplicationClient.getUsers();
+
         assertFalse(users.contains(users), "User not deleted");
         List<String> zipCodesAfterDeleteUser = ApplicationClient.getZipCodes();
         assertTrue(availableZipCodes.containsAll(zipCodesAfterDeleteUser), "Zip code not returned");
@@ -57,6 +54,7 @@ public class DeleteUserTest extends BaseTest {
         femaleUser.setZipCode(availableZipCodes.get(0));
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         femaleUser.setSex(null);
+        femaleUser.setName(null);
 
         ApplicationClient.deleteUser(ApiUtils.fromObjectToJson(femaleUser), HttpStatus.SC_CONFLICT);
         List<User> users = ApplicationClient.getUsers();
