@@ -1,4 +1,4 @@
-package tests.httpClient;
+package tests.restAssured;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -6,8 +6,9 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
-import rest.response.ApplicationClient;
 import rest.User;
+import rest.restAssured.ApplicationRestClient;
+import tests.httpClient.BaseTest;
 import utils.ApiUtils;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public class UpdateUserTest extends BaseTest {
     @Description(value = "Test checks update Users")
     @Test
     public void checkUpdateUser() {
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
-        ApplicationClient.updateUser(femaleUser, maleUser);
-        List<User> users = ApplicationClient.getUsers();
+        ApplicationRestClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
+        ApplicationRestClient.updateUser(femaleUser, maleUser);
+        List<User> users = ApplicationRestClient.getUsers();
         assertTrue(users.contains(maleUser), "User not updated");
     }
 
@@ -33,14 +34,14 @@ public class UpdateUserTest extends BaseTest {
     @Description(value = "Test checks update Users With Incorrect ZipCode")
     @Test
     public void checkUpdateUserWithIncorrectZipCode() {
-        List<String> availableZipCodes = ApplicationClient.getZipCodes();
+        List<String> availableZipCodes = ApplicationRestClient.getZipCodes();
         femaleUser.setZipCode(availableZipCodes.get(0));
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
-        List<User> users = ApplicationClient.getUsers();
+        ApplicationRestClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
+        List<User> users = ApplicationRestClient.getUsers();
         maleUser.setZipCode(availableZipCodes.get(0) + availableZipCodes.get(0));
 
-        ApplicationClient.updateUser(femaleUser, maleUser, HttpStatus.SC_FAILED_DEPENDENCY);
-        List<User> afterUpdateUser = ApplicationClient.getUsers();
+        ApplicationRestClient.updateUser(femaleUser, maleUser, HttpStatus.SC_FAILED_DEPENDENCY);
+        List<User> afterUpdateUser = ApplicationRestClient.getUsers();
         assertFalse(afterUpdateUser.contains(maleUser), "User updated");
         assertEquals(users.size(), afterUpdateUser.size(), "User deleted");
     }
@@ -51,13 +52,13 @@ public class UpdateUserTest extends BaseTest {
     @Description(value = "Test checks update Users With Fields")
     @Test
     public void checkUpdateUserWithoutRequiredFields() {
-        ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
-        List<User> users = ApplicationClient.getUsers();
+        ApplicationRestClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
+        List<User> users = ApplicationRestClient.getUsers();
         maleUser.setName(null);
         maleUser.setSex(null);
-        ApplicationClient.updateUser(femaleUser, maleUser, HttpStatus.SC_CONFLICT);
+        ApplicationRestClient.updateUser(femaleUser, maleUser, HttpStatus.SC_CONFLICT);
 
-        List<User> afterUpdateUser = ApplicationClient.getUsers();
+        List<User> afterUpdateUser = ApplicationRestClient.getUsers();
         assertFalse(afterUpdateUser.contains(maleUser), "User updated");
         assertEquals(users.size(), afterUpdateUser.size(), "User deleted");
     }

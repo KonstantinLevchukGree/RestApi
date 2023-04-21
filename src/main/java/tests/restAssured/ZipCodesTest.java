@@ -1,4 +1,4 @@
-package tests.httpClient;
+package tests.restAssured;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -7,6 +7,8 @@ import io.qameta.allure.Story;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import rest.response.ApplicationClient;
+import rest.restAssured.ApplicationRestClient;
+import tests.httpClient.BaseTest;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -20,7 +22,7 @@ public class ZipCodesTest extends BaseTest {
     @Description(value = "Test checks Available ZipCodes")
     @Test
     public void checkAvailableZipCodes() {
-        List<String> zipCodes = ApplicationClient.getZipCodes();
+        String zipCodes = ApplicationRestClient.getBodyZipCodes();
         Assertions.assertNotNull(zipCodes, "Zip codes are not available");
     }
 
@@ -30,9 +32,9 @@ public class ZipCodesTest extends BaseTest {
     @Description(value = "Test checks Add ZipCodes")
     @Test
     public void checkAddZipCodes() {
-        String zipCodes = ApplicationClient.getBodyZipCodes();
-        List<String> expandZipCodes = ApplicationClient.expandZipCodes(zipCodes);
-        List<String> afterExpandZipCodes = ApplicationClient.getZipCodes();
+        String zipCodes = ApplicationRestClient.getBodyZipCodes();
+        List<String> expandZipCodes = ApplicationRestClient.expandZipCodes(zipCodes);
+        List<String> afterExpandZipCodes = ApplicationRestClient.getZipCodes();
         Assertions.assertTrue(afterExpandZipCodes.containsAll(expandZipCodes), "Zip codes not added");
     }
 
@@ -42,9 +44,9 @@ public class ZipCodesTest extends BaseTest {
     @Description(value = "Test checks Duplicate ZipCodes")
     @Test
     public void checkDuplicateZipCodes() {
-        String allZipCodes = ApplicationClient.getBodyZipCodes();
-        List<String> expandZipCodes = ApplicationClient.expandZipCodes(allZipCodes);
-        List<String> afterExpandZipCodes = ApplicationClient.getZipCodes();
+        String allZipCodes = ApplicationRestClient.getBodyZipCodes();
+        List<String> expandZipCodes = ApplicationRestClient.expandZipCodes(allZipCodes);
+        List<String> afterExpandZipCodes = ApplicationRestClient.getZipCodes();
         Set<String> set = new LinkedHashSet<>(afterExpandZipCodes);
         Assertions.assertEquals(set.size(), expandZipCodes.size(), "Zip codes are duplicated");
     }

@@ -1,4 +1,4 @@
-package rest;
+package rest.http5;
 
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 

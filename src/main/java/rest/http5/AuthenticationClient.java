@@ -1,4 +1,4 @@
-package rest;
+package rest.http5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
