@@ -13,13 +13,14 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import rest.HttpDeleteWithBody;
+import org.apache.log4j.Logger;
+import rest.http5.HttpDeleteWithBody;
 
 import java.io.File;
 import java.net.URI;
 
-import static tests.BaseTest.readerToken;
-import static tests.BaseTest.writerToken;
+import static tests.httpClient.BaseTest.readerToken;
+import static tests.httpClient.BaseTest.writerToken;
 
 public class CloseableHttpClient {
     @SneakyThrows

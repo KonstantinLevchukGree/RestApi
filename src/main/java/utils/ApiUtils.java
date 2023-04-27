@@ -3,6 +3,7 @@ package utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import io.restassured.response.Response;
 import lombok.SneakyThrows;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -59,6 +60,17 @@ public class ApiUtils {
             }
         } finally {
             response.close();
+        }
+        return jsonString;
+    }
+
+    public static String fromResponseToString(Response response, int httpStatus) {
+        assertThat(response.statusCode(), equalTo(httpStatus));
+        String jsonString;
+        if (response.getBody().asString() == null) {
+            jsonString = "";
+        } else {
+            jsonString = response.getBody().asString();
         }
         return jsonString;
     }

@@ -1,10 +1,12 @@
-package tests;
+package tests.httpClient;
 
-import io.qameta.allure.*;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import rest.ApplicationClient;
+import rest.response.ApplicationClient;
 import rest.User;
 import utils.ApiUtils;
 
@@ -35,14 +37,11 @@ public class CreateUserTest extends BaseTest {
     @Test
     public void checkAddUserWithRequiredFields() {
         List<User> users = ApplicationClient.getUsers();
-        List<String> availableZipCodes = ApplicationClient.getZipCodes();
-        femaleUser.setZipCode(availableZipCodes.get(0));
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser));
         List<User> afterAddUser = ApplicationClient.getUsers();
         assertEquals(users.size() + 1, afterAddUser.size(), "User not added");
     }
 
-    @DisplayName("Test failed, should be 424 and added user with incorrect ZipCode")
     @Epic(value = "User")
     @Feature(value = "Create")
     @Story(value = "Incorrect ZipCode")
@@ -50,13 +49,13 @@ public class CreateUserTest extends BaseTest {
     @Test
     public void checkAddUserWithIncorrectZipCode() {
         List<User> users = ApplicationClient.getUsers();
-        femaleUser.setZipCode(incorrectZipCode);
+        List<String> availableZipCodes = ApplicationClient.getZipCodes();
+        femaleUser.setZipCode(availableZipCodes.get(0) + availableZipCodes.get(1));
         ApplicationClient.createUser(ApiUtils.fromObjectToJson(femaleUser), HttpStatus.SC_FAILED_DEPENDENCY);
         List<User> afterAddUser = ApplicationClient.getUsers();
         assertEquals(users.size(), afterAddUser.size(), "User added");
     }
 
-    @DisplayName("Test failed, should be 400 and added not unique user")
     @Epic(value = "User")
     @Feature(value = "Create")
     @Story(value = "Not Unique User")

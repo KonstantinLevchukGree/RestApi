@@ -1,0 +1,11 @@
+[ {
+  "name" : "Jon",
+  "age" : 5,
+  "sex" : "FEMALE",
+  "zipCode" : null
+}, {
+  "name" : null,
+  "age" : 5,
+  "sex" : null,
+  "zipCode" : null
+} ]

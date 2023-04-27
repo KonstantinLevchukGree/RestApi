@@ -1,4 +1,4 @@
-package rest;
+package rest.http5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -21,13 +21,13 @@ import rest.response.Token;
 import java.util.ArrayList;
 import java.util.List;
 
-import static tests.BaseTest.applicationData;
+import static tests.httpClient.BaseTest.appData;
 
 public class AuthenticationClient {
     private static BasicCredentialsProvider getProvider(String userName, String passwordUser) {
-        HttpHost targetHost = new HttpHost(applicationData.getProperty("token.host.name")
-                , Integer.parseInt(applicationData.getProperty("token.port.name"))
-                , applicationData.getProperty("token.scheme"));
+        HttpHost targetHost = new HttpHost(appData.getProperty("token.host.name")
+                , Integer.parseInt(appData.getProperty("token.port.name"))
+                , appData.getProperty("token.scheme"));
         BasicCredentialsProvider provider = new BasicCredentialsProvider();
         AuthScope authScope = new AuthScope(targetHost);
         provider.setCredentials(authScope, new UsernamePasswordCredentials
@@ -48,7 +48,7 @@ public class AuthenticationClient {
 
     @SneakyThrows
     private static CloseableHttpResponse getUser(Client user) {
-        HttpPost httpPost = new HttpPost(applicationData.getProperty("api.user.token"));
+        HttpPost httpPost = new HttpPost(appData.getProperty("api.user.token"));
         CloseableHttpClient client = getClient(httpPost, user);
         return client.execute(httpPost);
     }
